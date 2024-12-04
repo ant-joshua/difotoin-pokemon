@@ -1,13 +1,19 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Pokemon } from "@/lib/types";
+import { Pokemon } from "@/lib/types/pokemon";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+type PokemonList = {
+  name: string;
+  url: string;
+  detail: Pokemon;
+};
+
 export default function Home() {
-  const [pokemons, setPokemons] = useState<Pokemon[]>([]);
+  const [pokemons, setPokemons] = useState<PokemonList[]>([]);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
 
@@ -37,7 +43,7 @@ export default function Home() {
     const data = await response.json();
     const result = data.results;
 
-    result.forEach(async (pokemon: Pokemon) => {
+    result.forEach(async (pokemon: PokemonList) => {
       const responseDetail = await fetch(pokemon.url);
       const dataDetail = await responseDetail.json();
 
@@ -78,8 +84,9 @@ export default function Home() {
                           <div className="flex justify-center">
                             <Image
                               src={
-                                pokemon.detail.sprites.other["official-artwork"]
-                                  .front_default
+                                pokemon.detail?.sprites.other[
+                                  "official-artwork"
+                                ].front_default
                               }
                               alt="Product"
                               width={400}
