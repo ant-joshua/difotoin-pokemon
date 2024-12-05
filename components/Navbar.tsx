@@ -65,7 +65,7 @@ export default function Navbar() {
             <MobileLink
               href="/"
               className="flex items-center"
-              onOpenChange={(open) => {}}
+              onOpenChange={() => {}}
             >
               <span className="font-bold">Pokemon Gacha</span>
             </MobileLink>
@@ -75,7 +75,7 @@ export default function Navbar() {
                   <MobileLink
                     key={item.name}
                     href={item.href}
-                    onOpenChange={(open) => {}}
+                    onOpenChange={() => {}}
                   >
                     {item.name}
                   </MobileLink>
