@@ -14,6 +14,9 @@ import {
   Location,
   PokemonEncounter,
 } from "@/lib/types/location";
+import { addCollectionList } from "@/lib/store/collection";
+import { nanoid } from "nanoid";
+import { toast } from "sonner";
 
 export default function GachaPage() {
   const [locations, setLocations] = useState<
@@ -110,14 +113,27 @@ export default function GachaPage() {
     if (caughtPokemon) {
       const pokemonResponse = await fetch(caughtPokemon.pokemon.url);
       const pokemonData = await pokemonResponse.json();
+      const code = nanoid();
 
       setCaughtPokemon({
         ...pokemonData,
+        code: code,
         gender: caughtPokemon.gender,
         level: caughtPokemon.level,
+        version: caughtPokemon.version,
       });
     } else {
       setCaughtPokemon(null);
+    }
+  };
+
+  const addPokemonToMyCollection = () => {
+    const isAdded = addCollectionList(caughtPokemon!);
+
+    if (isAdded) {
+      toast.info(`${caughtPokemon?.name} has been added to your collection!`);
+    } else {
+      toast.error(`${caughtPokemon?.name} is already in your collection!`);
     }
   };
 
@@ -146,10 +162,15 @@ export default function GachaPage() {
           <CardTitle>Encounter Rates</CardTitle>
         </CardHeader>
         <CardContent>
-          <div>
+          <div className="flex gap-3">
             {encounterRates.map((rate, index) => (
               <Badge
                 key={index}
+                variant={
+                  selectedEncounterMethod === rate.encounter_method.name
+                    ? "default"
+                    : "outline"
+                }
                 onClick={() =>
                   setSelectedEncounterMethod(rate.encounter_method.name)
                 }
@@ -181,12 +202,38 @@ export default function GachaPage() {
           <CardContent>
             <div className="flex flex-col items-center">
               <Image
-                src={caughtPokemon.sprites.front_default}
+                src={
+                  caughtPokemon.sprites.other["official-artwork"].front_default
+                }
                 alt={caughtPokemon.name}
                 width={200}
                 height={200}
               />
+              <p>Code : {caughtPokemon.code}</p>
               <p>Gender: {caughtPokemon.gender}</p>
+              <p>Level: {caughtPokemon.level}</p>
+              <p>Version: {caughtPokemon.version?.name}</p>
+              <p>Type: </p>
+              <div className="flex gap-2">
+                {caughtPokemon.types.map((type) => (
+                  <Badge key={type.type.name}>{type.type.name}</Badge>
+                ))}
+              </div>
+              <p>Abilities: </p>
+              <div className="flex gap-2">
+                {caughtPokemon.abilities.map((ability) => (
+                  <Badge key={ability.ability.name}>
+                    {ability.ability.name}
+                  </Badge>
+                ))}
+              </div>
+              {/* Add to Collection */}
+              <Button
+                className="mt-4"
+                onClick={() => addPokemonToMyCollection()}
+              >
+                Add to Collection
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -194,7 +241,9 @@ export default function GachaPage() {
       {caughtPokemon === null && (
         <Card>
           <CardContent>
-            <p>No Pokemon encountered this time. Try again!</p>
+            <div className="flex flex-col items-center justify-center pt-5">
+              <p>No Pokemon encountered this time. Try again!</p>
+            </div>
           </CardContent>
         </Card>
       )}

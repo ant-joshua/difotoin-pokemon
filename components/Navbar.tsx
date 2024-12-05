@@ -17,6 +17,7 @@ import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 const navItems = [
   { name: "Home", href: "/" },
   { name: "Gacha", href: "/gacha" },
+  { name: "Collection", href: "/collection" },
 ];
 
 export default function Navbar() {

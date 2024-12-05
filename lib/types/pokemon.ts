@@ -1,4 +1,5 @@
 export interface Pokemon {
+  code?: string; // optional buat gacha dan collection
   id: number;
   name: string;
   base_experience: number;
@@ -6,6 +7,11 @@ export interface Pokemon {
   is_default: boolean;
   order: number;
   gender?: string; // optional buat gacha
+  level?: number; // optional buat gacha
+  version?: {
+    name: string;
+    url: string;
+  };
   weight: number;
   abilities: Ability[];
   forms: Species[];
